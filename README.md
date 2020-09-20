@@ -5,4 +5,28 @@
 A typescript client for [are.na](are.na).
 
 This is a work in progress and a partial implementation.
-Documentation of are.na's restful api can be found at [dev.are.na](dev.are.na).
+
+### Installation
+
+```bash
+// using npm
+npm install arena-ts
+// using yarn
+yarn add arena-ts
+
+```
+
+### Example
+```ts
+import { ArenaClient } from 'arena-ts';
+
+const client = new ArenaClient();
+
+client.channels().then(console.log);
+```
+
+### API
+
+[Arena Client API Documentation](https://e-e-e.github.io/arena-ts/)
+
+This is based on [Arena's Restful API](dev.are.na).
