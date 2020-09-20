@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "rootDir": "./src"
+  },
+  "typedocOptions": {
+    "inputFiles": ["./src"],
+    "mode": "modules",
+    "out": "docs",
+    "theme": "default"
+  },
+  "include": ["./src/"],
+  "exclude": ["./dist/", "./test/"]
+}
