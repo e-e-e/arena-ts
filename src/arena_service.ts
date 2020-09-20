@@ -140,7 +140,7 @@ export class ArenaClient implements Arena_service {
       body: data ? JSON.stringify(data) : undefined,
     }).then((res) => {
       if (res.status === 200) {
-        return undefined
+        return undefined;
       }
       throw new HttpError(res.statusText, res.status);
     });
@@ -165,7 +165,7 @@ export class ArenaClient implements Arena_service {
       headers: this.headers,
     }).then((res) => {
       if (res.status === 200) {
-        return undefined
+        return undefined;
       }
       throw new HttpError(res.statusText, res.status);
     });

@@ -1,43 +1,5 @@
 import { ArenaClient } from '../src';
-import fetchMock, { FetchMock } from 'jest-fetch-mock';
-
-function calledWithUrl(fn: FetchMock, url: string) {
-  expect(fn).toBeCalledWith(url, expect.objectContaining({}));
-}
-
-function calledWithAuth(fn: FetchMock, token: string) {
-  expect(fn).toBeCalledWith(
-    expect.stringContaining(''),
-    expect.objectContaining({
-      headers: expect.objectContaining({
-        Authorization: token,
-      }),
-    })
-  );
-}
-
-function calledWithContentType(fn: FetchMock, type: string) {
-  expect(fn).toBeCalledWith(
-    expect.stringContaining(''),
-    expect.objectContaining({
-      headers: expect.objectContaining({
-        'Content-Type': type,
-      }),
-    })
-  );
-}
-
-function calledWithMethod(
-  fn: FetchMock,
-  method: 'GET' | 'DELETE' | 'PUT' | 'POST'
-) {
-  expect(fn).toBeCalledWith(
-    expect.stringContaining(''),
-    expect.objectContaining({
-      method: method,
-    })
-  );
-}
+import fetchMock from 'jest-fetch-mock';
 
 function expectHttpError(message: string, status: number) {
   return expect.objectContaining({
