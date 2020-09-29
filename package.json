@@ -1,6 +1,6 @@
 {
   "name": "arena-ts",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A typescript API client for Are.na",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
