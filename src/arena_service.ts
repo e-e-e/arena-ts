@@ -13,7 +13,7 @@ export class HttpError extends Error {
   }
 }
 
-export interface Arena_service {
+export interface ArenaService {
   /**
    *  Fetch information about current authenticated user.
    */
@@ -61,7 +61,7 @@ export interface Arena_service {
 type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 type Date = { now(): number };
 
-export class ArenaClient implements Arena_service {
+export class ArenaClient implements ArenaService {
   private readonly domain = 'https://api.are.na/v2/';
   private readonly headers: HeadersInit;
   private readonly fetch: Fetch;
