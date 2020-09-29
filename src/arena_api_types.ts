@@ -88,11 +88,17 @@ export type BlockApiType = {
     /**(Timestamp)	Timestamp of the last time the file was updated */
     updated_at: string;
     /** (Hash)	Only contains url which is a URL of the thumbnail sized image (200x200) */
-    thumb: string;
+    thumb: { url: string };
     /**(Hash)	Only contains url which is a URL of the display sized image (same aspect ratio as original image but with a maximim width of 600px or a maximum height of 600px, whichever comes first) */
-    display: string;
+    display: { url: string };
+    large: { url: string };
+    square: { url: string };
     /**	(Hash)	Contains url which is a URL of the original image as well file_size (an integer representation in bytes) and file_size_display (a nicer string representation of the file_size) */
-    original: string;
+    original: {
+      file_size: number;
+      file_size_display: string;
+      url: string;
+    };
   } | null;
   /**	(Hash)	Representation of the author of the block */
   user: string;
