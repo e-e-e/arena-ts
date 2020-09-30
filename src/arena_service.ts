@@ -172,7 +172,7 @@ export class ArenaClient implements ArenaService {
   }
 
   private paginationQueryString(options?: PaginationAttributes) {
-    const { page, per, sort, direction } = {
+    const { page, per, sort, direction, forceRefresh } = {
       ...ArenaClient.defaultPaginationOptions,
       ...options,
     };
@@ -181,7 +181,7 @@ export class ArenaClient implements ArenaService {
     if (per) attrs.push(`per=${per}`);
     if (sort) attrs.push(`sort=${sort}`);
     if (direction) attrs.push(`direction=${direction}`);
-    attrs.push(`date=${this.date.now()}`);
+    if (forceRefresh) attrs.push(`date=${this.date.now()}`);
     return attrs.join('&');
   }
 }

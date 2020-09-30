@@ -113,6 +113,27 @@ describe('ArenaClient', () => {
         );
       });
     });
+    describe('pagination options', () => {
+      it('appends date as query string if forceRefresh option is true', async () => {
+        const fetch = createFetchMockWithSimpleResponse();
+        const client = new ArenaClient({
+          token: 'MY_API_TOKEN',
+          fetch,
+          date: fakeDate,
+        });
+        await expect(
+          client.channels({ forceRefresh: true })
+        ).resolves.toMatchObject(fakeResponseBody);
+        expect(fetch).toBeCalledTimes(1);
+        expect(fetch).toBeCalledWith(expect.stringContaining('date=12345'), {
+          headers: {
+            Authorization: 'Bearer MY_API_TOKEN',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        });
+      });
+    });
   });
 
   describe('channel', () => {
@@ -144,12 +165,12 @@ describe('ArenaClient', () => {
         fetch,
         date: fakeDate,
       });
-      await expect(client.channel('fake-channel-id', { per: 1, page: 1, direction: "asc" })).resolves.toMatchObject(
-        fakeResponseBody
-      );
+      await expect(
+        client.channel('fake-channel-id', { per: 1, page: 1, direction: 'asc' })
+      ).resolves.toMatchObject(fakeResponseBody);
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
-        'https://api.are.na/v2/channels/fake-channel-id?page=1&per=1&sort=position&direction=asc&date=12345',
+        'https://api.are.na/v2/channels/fake-channel-id?page=1&per=1&sort=position&direction=asc',
         {
           headers: {
             Authorization: '',
@@ -158,7 +179,29 @@ describe('ArenaClient', () => {
           method: 'GET',
         }
       );
-    })
+    });
+
+    describe('pagination options', () => {
+      it('appends date as query string if forceRefresh option is true', async () => {
+        const fetch = createFetchMockWithSimpleResponse();
+        const client = new ArenaClient({
+          token: 'MY_API_TOKEN',
+          fetch,
+          date: fakeDate,
+        });
+        await expect(
+          client.channel('test', { forceRefresh: true })
+        ).resolves.toMatchObject(fakeResponseBody);
+        expect(fetch).toBeCalledTimes(1);
+        expect(fetch).toBeCalledWith(expect.stringContaining('date=12345'), {
+          headers: {
+            Authorization: 'Bearer MY_API_TOKEN',
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        });
+      });
+    });
   });
 
   describe('block', () => {

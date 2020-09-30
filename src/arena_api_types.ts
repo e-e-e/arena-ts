@@ -172,12 +172,14 @@ export type ConnectionApiType = (BlockApiType | ChannelApiType) &
  *  Options available for paginating requests to channel endpoints.
  */
 export type PaginationAttributes = {
-  /** Number of items returned per page */
+  /** Number of items returned per page. */
   per?: number;
-  /** The page to fetch */
+  /** The page to fetch. */
   page?: number;
-  /** The field to sort results by */
+  /** The field to sort results by. */
   sort?: string;
-  /** The direction of returned results */
+  /** The direction of returned results. */
   direction?: 'asc' | 'desc';
+  /** Force refresh of the server cache. */
+  forceRefresh?: boolean;
 };
