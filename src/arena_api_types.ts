@@ -44,6 +44,28 @@ export type MeApiType = UserApiType & {
   channels: ReadonlyArray<ChannelApiType>;
 };
 
+export type AttachmentType = {
+  content_type: string;
+  extension: string;
+  file_name: string;
+  file_size: number;
+  file_size_display: string;
+  url: string;
+};
+
+export type EmbedType = {
+  author_name: string | null;
+  author_url: string | null; // https://soundcloud.com/dkmntl"
+  height: number;
+  html: string | null;
+  source_url: string | null;
+  thumbnail_url: string | null;
+  title: string | null;
+  type: 'rich' | null;
+  url: string | null;
+  width: number;
+};
+
 export type BlockApiType = {
   /**	(Integer)	The internal ID of the block */
   id: number;
@@ -104,6 +126,8 @@ export type BlockApiType = {
   user: string;
   /**	(Array)	An array of hash representations of each of the channels the block appears in */
   connections: string[];
+  attachment?: AttachmentType;
+  embed?: EmbedType;
 };
 
 export type ConnectionInfoApiType = {
