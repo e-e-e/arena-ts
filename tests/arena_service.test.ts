@@ -219,7 +219,7 @@ describe('ArenaClient', () => {
       );
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
-        expect.stringMatching('https://api.are.na/v2/blocks/fake-block-id'),
+        expect.stringMatching('https://api.are.na/v2/blocks/3'),
         {
           headers: {
             Authorization: 'Bearer MY_API_TOKEN',
@@ -261,7 +261,7 @@ describe('ArenaClient', () => {
       });
       await expect(
         client.channel('fake-channel-id').connect.channel(3)
-      ).resolves.toBeUndefined();
+      ).resolves.toMatchObject(fakeResponseBody);
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
         'https://api.are.na/v2/channels/fake-channel-id/connections',
@@ -308,7 +308,7 @@ describe('ArenaClient', () => {
           ).resolves.toBeUndefined();
           expect(fetch).toBeCalledTimes(1);
           expect(fetch).toBeCalledWith(
-            'https://api.are.na/v2/channels/fake-channel-id/blocks/block-id',
+            'https://api.are.na/v2/channels/fake-channel-id/blocks/3',
             {
               headers: {
                 Authorization: 'Bearer MY_API_TOKEN',

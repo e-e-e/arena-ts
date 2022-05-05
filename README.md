@@ -36,8 +36,8 @@ client.channels().then(console.log);
 ##### Node JS
 
 To use this library in Node you will need to inject your choice of Fetch API compatible libraries when instantiating the
-client.A good choice is [node-fetch](https://www.npmjs.com/package/node-fetch). Fetch polyfills have been excluded from
-this package to make it ligher for browsers where fetch is included natively.
+client. A good choice is [node-fetch](https://www.npmjs.com/package/node-fetch). Fetch polyfills have been excluded from
+this package to make it lighter for browsers where fetch is included natively.
 
 For example:
 

@@ -48,6 +48,28 @@ export type MeApiResponse = ArenaUserWithDetails & {
   channels: GetChannelsApiResponse[];
 };
 
+export type GetUserApiResponse = ArenaUserWithDetails;
+export type GetUserFollowersApiResponse = {
+  length: number;
+  total_pages: number;
+  current_page: number;
+  per: number;
+  base_class: 'User';
+  class: 'User';
+  users: ArenaUserWithDetails[];
+};
+export type GetUserFollowingApiResponse = GetUserFollowersApiResponse;
+
+export type GetUserChannelsApiResponse = {
+  length: number;
+  total_pages: number;
+  current_page: number;
+  per: number;
+  base_class: 'User';
+  class: 'User';
+  channels: ArenaChannelWithDetails[];
+};
+
 export type ArenaAttachment = {
   content_type: string;
   extension: string;
@@ -139,31 +161,12 @@ export type ArenaBlock = {
   user: ArenaUserWithDetails; // can be user when returning
   attachment?: ArenaAttachment | null;
   embed?: ArenaEmbed | null;
-  connections?: ArenaChannelConnection[]; // connection type
-};
-
-type ArenaChannelConnection = {
-  id: 749653;
-  title: 'time + space';
-  created_at: '2020-07-16T15:11:07.564Z';
-  updated_at: '2022-04-22T02:37:29.285Z';
-  added_to_at: '2022-04-22T02:37:29.285Z';
-  published: true;
-  open: false;
-  collaboration: false;
-  slug: 'time-space-om1wckwnjzi';
-  length: 56;
-  kind: 'default';
-  status: 'closed';
-  user_id: number;
-  metadata: { description: '' } | null;
-  share_link: null | string;
-  base_class: 'Channel';
+  connections?: ArenaChannel[]; // connection type
 };
 
 export type GetBlockApiResponse = ArenaBlock & {
   /**  (Array)  An array of hash representations of each of the channels the block appears in */
-  connections: ArenaChannelConnection[];
+  connections: ArenaChannel[];
 };
 
 export type CreateBlockApiResponse = ArenaBlock & ConnectionData;

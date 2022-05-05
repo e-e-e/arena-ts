@@ -3,7 +3,6 @@ import {
   GetConnectionsApiResponse,
   MeApiResponse,
   PaginationAttributes,
-  ArenaUser,
   GetGroupApiResponse,
   GetGroupChannelsApiResponse,
   SearchApiResponse,
@@ -15,6 +14,10 @@ import {
   GetChannelContentsApiResponse,
   ChannelConnectBlockApiResponse,
   ChannelConnectChannelApiResponse,
+  GetUserChannelsApiResponse,
+  GetUserApiResponse,
+  GetUserFollowersApiResponse,
+  GetUserFollowingApiResponse,
 } from './arena_api_types';
 
 export class HttpError extends Error {
@@ -40,13 +43,15 @@ interface ArenaBlockApi {
 }
 
 interface ArenaUserApi {
-  get(): Promise<ArenaUser>;
+  get(): Promise<GetUserApiResponse>;
 
-  channels(options?: PaginationAttributes): Promise<GetChannelsApiResponse[]>;
+  channels(
+    options?: PaginationAttributes
+  ): Promise<GetUserChannelsApiResponse[]>;
 
-  following(): Promise<ArenaUser[]>;
+  following(): Promise<GetUserFollowingApiResponse[]>;
 
-  followers(): Promise<ArenaUser[]>;
+  followers(): Promise<GetUserFollowersApiResponse[]>;
 }
 
 type ChannelStatus = 'public' | 'closed' | 'private';
@@ -169,12 +174,12 @@ export class ArenaClient implements ArenaApi {
 
   user(id: string): ArenaUserApi {
     return {
-      get: (): Promise<ArenaUser> => this.getJson(`users/${id}`),
+      get: (): Promise<GetUserApiResponse> => this.getJson(`users/${id}`),
       channels: (options?: PaginationAttributes) =>
         this.getJsonWithPaginationQuery(`users/${id}/channels`, options),
-      following: (): Promise<ArenaUser[]> =>
+      following: (): Promise<GetUserFollowingApiResponse[]> =>
         this.getJson(`users/${id}/following`),
-      followers: (): Promise<ArenaUser[]> =>
+      followers: (): Promise<GetUserFollowersApiResponse[]> =>
         this.getJson(`users/${id}/followers`),
     };
   }
@@ -203,7 +208,7 @@ export class ArenaClient implements ArenaApi {
         block: (blockId: number) =>
           // 204 on success
           this.del(`channels/${slug}/blocks/${blockId}`),
-        channel: (id: number) => {
+        channel: () => {
           throw new Error('Method Not Implemented');
         },
       },
