@@ -1,10 +1,20 @@
 import {
-  BlockApiType,
-  ChannelApiType,
-  ConnectionApiType,
-  MeApiType,
+  GetChannelsApiResponse,
+  GetConnectionsApiResponse,
+  MeApiResponse,
   PaginationAttributes,
-  UserApiType,
+  ArenaUser,
+  GetGroupApiResponse,
+  GetGroupChannelsApiResponse,
+  SearchApiResponse,
+  GetBlockApiResponse,
+  CreateBlockApiResponse,
+  GetBlockChannelsApiResponse,
+  CreateChannelApiResponse,
+  GetChannelThumbApiResponse,
+  GetChannelContentsApiResponse,
+  ChannelConnectBlockApiResponse,
+  ChannelConnectChannelApiResponse,
 } from './arena_api_types';
 
 export class HttpError extends Error {
@@ -16,81 +26,116 @@ export class HttpError extends Error {
 }
 
 interface ArenaBlockApi {
-  get(): Promise<BlockApiType>;
+  get(): Promise<GetBlockApiResponse>;
 
-  channels(options?: PaginationAttributes): Promise<ChannelApiType[]>;
+  channels(
+    options?: PaginationAttributes
+  ): Promise<GetBlockChannelsApiResponse[]>;
+
+  update(data: {
+    title?: string;
+    description?: string;
+    content?: string;
+  }): Promise<undefined>;
 }
 
 interface ArenaUserApi {
-  get(): Promise<UserApiType>;
+  get(): Promise<ArenaUser>;
 
-  channels(options?: PaginationAttributes): Promise<ChannelApiType[]>;
+  channels(options?: PaginationAttributes): Promise<GetChannelsApiResponse[]>;
 
-  following(): Promise<UserApiType[]>;
+  following(): Promise<ArenaUser[]>;
 
-  followers(): Promise<UserApiType[]>;
+  followers(): Promise<ArenaUser[]>;
 }
 
 type ChannelStatus = 'public' | 'closed' | 'private';
 
+interface ArenaGroupApi {
+  get(): Promise<GetGroupApiResponse>;
+
+  channels(
+    options?: PaginationAttributes
+  ): Promise<GetGroupChannelsApiResponse>;
+}
+
 interface ArenaChannelApi {
-  create(status?: ChannelStatus): Promise<any>;
+  create(status?: ChannelStatus): Promise<CreateChannelApiResponse>;
 
-  get(options?: PaginationAttributes): Promise<ChannelApiType>;
+  get(options?: PaginationAttributes): Promise<GetChannelsApiResponse>;
 
-  delete(): Promise<void>;
+  delete(): Promise<undefined>;
 
-  update(data: { title: string; status?: ChannelStatus }): Promise<any>;
+  update(data: { title: string; status?: ChannelStatus }): Promise<undefined>;
 
-  thumb(): Promise<ChannelApiType>;
+  thumb(): Promise<GetChannelThumbApiResponse>;
 
-  contents(options?: PaginationAttributes): Promise<any>;
+  contents(
+    options?: PaginationAttributes
+  ): Promise<GetChannelContentsApiResponse>;
 
   createBlock(data: {
     source?: string;
     content?: string;
-  }): Promise<BlockApiType>;
+    description?: string;
+  }): Promise<CreateBlockApiResponse>;
 
   connect: {
-    block(id: string): Promise<void>;
-    channel(slug: string): Promise<void>;
+    block(id: number): Promise<ChannelConnectBlockApiResponse>;
+    channel(id: number): Promise<ChannelConnectChannelApiResponse>;
   };
   disconnect: {
-    block(id: string): Promise<void>;
-    channel(id: string): Promise<void>;
+    block(id: number): Promise<void>;
+    channel(id: number): Promise<void>;
   };
 
-  connections(options?: PaginationAttributes): Promise<ConnectionApiType[]>;
+  connections(
+    options?: PaginationAttributes
+  ): Promise<GetConnectionsApiResponse[]>;
 }
 
 interface ArenaSearchApi {
-  everything(query: string): Promise<any>;
+  everything(
+    query: string,
+    options?: PaginationAttributes
+  ): Promise<SearchApiResponse>;
 
-  users(query: string): Promise<any>;
+  users(
+    query: string,
+    options?: PaginationAttributes
+  ): Promise<SearchApiResponse>;
 
-  channels(query: string): Promise<any>;
+  channels(
+    query: string,
+    options?: PaginationAttributes
+  ): Promise<SearchApiResponse>;
 
-  blocks(query: string): Promise<any>;
+  blocks(
+    query: string,
+    options?: PaginationAttributes
+  ): Promise<SearchApiResponse>;
 }
 
 interface ArenaApi {
   /**
    *  Fetch information about current authenticated user.
    */
-  me(): Promise<MeApiType>;
+  me(): Promise<MeApiResponse>;
 
-  channels(options: PaginationAttributes): Promise<ChannelApiType>;
+  channels(options?: PaginationAttributes): Promise<GetChannelsApiResponse>;
 
   user(id: string): ArenaUserApi;
 
+  group(slug: string): ArenaGroupApi;
+
   channel(slug: string): ArenaChannelApi;
 
-  block(id: string): ArenaBlockApi;
+  block(id: number): ArenaBlockApi;
 
-  search(): ArenaSearchApi;
+  readonly search: ArenaSearchApi;
 }
 
-type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
 type Date = { now(): number };
 
 export class ArenaClient implements ArenaApi {
@@ -110,7 +155,7 @@ export class ArenaClient implements ArenaApi {
       'Content-Type': 'application/json',
       Authorization: config?.token ? `Bearer ${config.token}` : '',
     };
-    this.fetch = config?.fetch || window?.fetch.bind(window);
+    this.fetch = config?.fetch || (window?.fetch.bind(window) as any as Fetch);
     this.date = config?.date || Date;
   }
 
@@ -118,40 +163,53 @@ export class ArenaClient implements ArenaApi {
     return this.getJson('me');
   }
 
-  channels(options?: PaginationAttributes): Promise<ChannelApiType> {
-    const qs = this.paginationQueryString(options);
-    const url = `channels/`;
-    return this.getJson(`${url}?${qs}`);
+  channels(options?: PaginationAttributes): Promise<GetChannelsApiResponse> {
+    return this.getJsonWithPaginationQuery('channels', options);
   }
 
   user(id: string): ArenaUserApi {
     return {
-      get: (): Promise<UserApiType> => this.getJson(`users/${id}`),
+      get: (): Promise<ArenaUser> => this.getJson(`users/${id}`),
       channels: (options?: PaginationAttributes) =>
         this.getJsonWithPaginationQuery(`users/${id}/channels`, options),
-      following: (): Promise<UserApiType[]> =>
+      following: (): Promise<ArenaUser[]> =>
         this.getJson(`users/${id}/following`),
-      followers: (): Promise<UserApiType[]> =>
+      followers: (): Promise<ArenaUser[]> =>
         this.getJson(`users/${id}/followers`),
+    };
+  }
+
+  group(slug: string): ArenaGroupApi {
+    return {
+      get: () => this.getJson(`groups/${slug}`),
+      channels: (options?: PaginationAttributes): Promise<any> => {
+        return this.getJsonWithPaginationQuery(
+          `groups/${slug}/channels`,
+          options
+        );
+      },
     };
   }
 
   channel(slug: string): ArenaChannelApi {
     return {
       connect: {
-        block: (blockId: string) =>
+        block: (blockId: number) =>
           this.createConnection(slug, blockId, 'Block'),
-        channel: (channelId: string) =>
+        channel: (channelId: number) =>
           this.createConnection(slug, channelId, 'Channel'),
       },
       disconnect: {
-        block: (blockId: string) =>
+        block: (blockId: number) =>
+          // 204 on success
           this.del(`channels/${slug}/blocks/${blockId}`),
-        channel: (channelId: string) => {
+        channel: (id: number) => {
           throw new Error('Method Not Implemented');
         },
       },
-      contents: (options?: PaginationAttributes): Promise<BlockApiType> => {
+      contents: (
+        options?: PaginationAttributes
+      ): Promise<GetChannelContentsApiResponse> => {
         return this.getJsonWithPaginationQuery(
           `channels/${slug}/contents`,
           options
@@ -159,13 +217,13 @@ export class ArenaClient implements ArenaApi {
       },
       connections: (
         options?: PaginationAttributes
-      ): Promise<ConnectionApiType[]> => {
+      ): Promise<GetConnectionsApiResponse[]> => {
         return this.getJsonWithPaginationQuery(
           `channels/${slug}/connections`,
           options
         );
       },
-      create: (status?: ChannelStatus): Promise<any> => {
+      create: (status?: ChannelStatus): Promise<CreateChannelApiResponse> => {
         return this.postJson('channels', {
           title: slug,
           status,
@@ -174,53 +232,92 @@ export class ArenaClient implements ArenaApi {
       update: (data: {
         title: string;
         status?: ChannelStatus;
-      }): Promise<any> => {
+      }): Promise<undefined> => {
         return this.putJson(`channels/${slug}`, data);
       },
       createBlock: (data: {
         source?: string;
         content?: string;
-      }): Promise<BlockApiType> => {
+        description?: string;
+      }): Promise<CreateBlockApiResponse> => {
         return this.postJson(`channels/${slug}/blocks`, data);
       },
-      get: (options?: PaginationAttributes): Promise<ChannelApiType> =>
+      get: (options?: PaginationAttributes): Promise<GetChannelsApiResponse> =>
         this.getJsonWithPaginationQuery(`channels/${slug}`, options),
-      delete: (): Promise<void> => this.del(`channels/${slug}`),
-      thumb: (): Promise<ChannelApiType> =>
+      delete: (): Promise<undefined> => {
+        return this.del(`channels/${slug}`);
+      },
+      thumb: (): Promise<GetChannelThumbApiResponse> =>
         this.getJson(`channels/${slug}/thumb`),
     };
   }
 
-  block(id: string): ArenaBlockApi {
+  block(id: number): ArenaBlockApi {
     return {
-      channels: (options?: PaginationAttributes): Promise<ChannelApiType[]> =>
+      channels: (
+        options?: PaginationAttributes
+      ): Promise<GetBlockChannelsApiResponse[]> =>
         this.getJsonWithPaginationQuery(`blocks/${id}/channels`, options),
-      get: (): Promise<BlockApiType> => this.getJson(`blocks/${id}`),
+      get: (): Promise<GetBlockApiResponse> => {
+        return this.getJson(`blocks/${id}`);
+      },
+      update: (data: {
+        title?: string;
+        description?: string;
+        content?: string;
+      }): Promise<undefined> => {
+        return this.putJson(`blocks/${id}`, data);
+      },
     };
   }
 
-  search(): ArenaSearchApi {
+  get search(): ArenaSearchApi {
     return {
-      everything: (query: string): Promise<any> =>
-        this.getJson(`/search?q=${query}`),
-      blocks: (query: string): Promise<any> =>
-        this.getJson(`/search/blocks?q=${query}`),
-      channels: (query: string): Promise<any> =>
-        this.getJson(`/search/channels?q=${query}`),
-      users: (query: string): Promise<any> =>
-        this.getJson(`/search/users?q=${query}`),
+      everything: (
+        query: string,
+        options?: PaginationAttributes
+      ): Promise<any> =>
+        this.getJsonWithSearchAndPaginationQuery(`/search`, {
+          q: query,
+          ...options,
+        }),
+      blocks: (query: string, options?: PaginationAttributes): Promise<any> =>
+        this.getJsonWithSearchAndPaginationQuery(`/search/blocks`, {
+          q: query,
+          ...options,
+        }),
+      channels: (query: string, options?: PaginationAttributes): Promise<any> =>
+        this.getJsonWithSearchAndPaginationQuery(`/search/channels`, {
+          q: query,
+          ...options,
+        }),
+      users: (query: string, options?: PaginationAttributes): Promise<any> =>
+        this.getJsonWithSearchAndPaginationQuery(`/search/users`, {
+          q: query,
+          ...options,
+        }),
     };
   }
 
   private createConnection(
     channelSlug: string,
-    id: string,
+    id: number,
     type: 'Block' | 'Channel'
   ) {
     return this.postJson(`channels/${channelSlug}/connections`, {
       connectable_type: type,
       connectable_id: id,
     });
+  }
+
+  private getJsonWithSearchAndPaginationQuery(
+    url: string,
+    options?: PaginationAttributes & { q?: string }
+  ) {
+    const qs = this.paginationQueryString(options);
+    const searchQuery =
+      options && options.q ? `q=${options.q}${qs ? '&' : ''}` : '';
+    return this.getJson(`${url}?${searchQuery}${qs}`);
   }
 
   private getJsonWithPaginationQuery(
@@ -236,7 +333,7 @@ export class ArenaClient implements ArenaApi {
       method: 'GET',
       headers: this.headers,
     }).then((res: Response) => {
-      if (res.status === 200) {
+      if (res.ok) {
         return res.json();
       }
       throw new HttpError(res.statusText, res.status);
@@ -249,7 +346,7 @@ export class ArenaClient implements ArenaApi {
       headers: this.headers,
       body: data ? JSON.stringify(data) : undefined,
     }).then((res) => {
-      if (res.status === 200) {
+      if (res.ok) {
         return undefined;
       }
       throw new HttpError(res.statusText, res.status);
@@ -262,7 +359,7 @@ export class ArenaClient implements ArenaApi {
       headers: this.headers,
       body: data ? JSON.stringify(data) : undefined,
     }).then((res) => {
-      if (res.status === 200) {
+      if (res.ok) {
         return res.json();
       }
       throw new HttpError(res.statusText, res.status);
@@ -274,7 +371,7 @@ export class ArenaClient implements ArenaApi {
       method: 'DELETE',
       headers: this.headers,
     }).then((res) => {
-      if (res.status === 200) {
+      if (res.ok) {
         return undefined;
       }
       throw new HttpError(res.statusText, res.status);
