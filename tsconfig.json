@@ -44,9 +44,13 @@
     "forceConsistentCasingInFileNames": true
   },
   "typedocOptions": {
-    "inputFiles": ["./src"],
-    "mode": "modules",
     "out": "docs",
-    "theme": "default"
-  },
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "entryPoints": [
+      "./src/index.ts"
+    ],
+    "theme": "default",
+  }
 }

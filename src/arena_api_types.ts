@@ -26,7 +26,7 @@ export type ArenaUser = {
   initials: string;
 };
 
-type ArenaUserWithDetails = ArenaUser & {
+export type ArenaUserWithDetails = ArenaUser & {
   avatar_image: {
     display: string;
     thumb: string;
@@ -92,7 +92,7 @@ export type ArenaEmbed = {
   width: number;
 };
 
-type ArenaImage = {
+export type ArenaImage = {
   /**  (String)  Name of the file as it appears on the Arena filesystem */
   filename: string;
   /**  (String)  MIME type of the image (e.g. 'image/png') */
@@ -193,7 +193,7 @@ export type ConnectionData = {
   connected_by_user_slug?: string;
 };
 
-type ArenaGroup = {
+export type ArenaGroup = {
   id: number;
   class: 'Group';
   base_class: 'Group';
@@ -214,7 +214,7 @@ export type GetGroupApiResponse = ArenaGroup & {
   published: boolean;
 };
 
-type ArenaChannel = {
+export type ArenaChannel = {
   /**  (Integer)  The internal ID of the channel */
   id: number;
   /**  (String)  The title of the channel */
@@ -250,7 +250,7 @@ type ArenaChannel = {
   base_class: 'Channel';
 };
 
-type ArenaOwnerInfo = {
+export type ArenaOwnerInfo = {
   owner_type: 'Group' | 'User';
   owner_id: string;
   owner_slug?: string;
@@ -265,7 +265,7 @@ export type GetChannelThumbApiResponse = ArenaChannel &
     > | null;
   };
 
-type ArenaChannelContents = (ArenaBlock | ArenaChannelWithDetails) &
+export type ArenaChannelContents = (ArenaBlock | ArenaChannelWithDetails) &
   ConnectionData;
 
 export type GetChannelContentsApiResponse = {
@@ -276,7 +276,7 @@ export type ChannelConnectBlockApiResponse = ArenaBlock & ConnectionData;
 export type ChannelConnectChannelApiResponse = ArenaChannelWithDetails &
   ConnectionData;
 
-type ArenaChannelWithDetails = ArenaOwnerInfo & {
+export type ArenaChannelWithDetails = ArenaOwnerInfo & {
   /**  (Object)  More information on the channel author. Contains id, slug, first_name, last_name, full_name, avatar, email, channel_count, following_count, follower_count, and profile_id */
   user?: ArenaUserWithDetails;
   group?: ArenaGroup;

@@ -28,7 +28,7 @@ export class HttpError extends Error {
   }
 }
 
-interface ArenaBlockApi {
+export interface ArenaBlockApi {
   get(): Promise<GetBlockApiResponse>;
 
   channels(
@@ -42,7 +42,7 @@ interface ArenaBlockApi {
   }): Promise<undefined>;
 }
 
-interface ArenaUserApi {
+export interface ArenaUserApi {
   get(): Promise<GetUserApiResponse>;
 
   channels(
@@ -54,9 +54,9 @@ interface ArenaUserApi {
   followers(): Promise<GetUserFollowersApiResponse[]>;
 }
 
-type ChannelStatus = 'public' | 'closed' | 'private';
+export type ChannelStatus = 'public' | 'closed' | 'private';
 
-interface ArenaGroupApi {
+export interface ArenaGroupApi {
   get(): Promise<GetGroupApiResponse>;
 
   channels(
@@ -64,7 +64,7 @@ interface ArenaGroupApi {
   ): Promise<GetGroupChannelsApiResponse>;
 }
 
-interface ArenaChannelApi {
+export interface ArenaChannelApi {
   create(status?: ChannelStatus): Promise<CreateChannelApiResponse>;
 
   get(options?: PaginationAttributes): Promise<GetChannelsApiResponse>;
@@ -99,7 +99,7 @@ interface ArenaChannelApi {
   ): Promise<GetConnectionsApiResponse[]>;
 }
 
-interface ArenaSearchApi {
+export interface ArenaSearchApi {
   everything(
     query: string,
     options?: PaginationAttributes
@@ -121,7 +121,7 @@ interface ArenaSearchApi {
   ): Promise<SearchApiResponse>;
 }
 
-interface ArenaApi {
+export interface ArenaApi {
   /**
    *  Fetch information about current authenticated user.
    */
@@ -140,8 +140,8 @@ interface ArenaApi {
   readonly search: ArenaSearchApi;
 }
 
-type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
-type Date = { now(): number };
+export type Fetch = (url: RequestInfo, init?: RequestInit) => Promise<Response>;
+export type Date = { now(): number };
 
 export class ArenaClient implements ArenaApi {
   private readonly domain = 'https://api.are.na/v2/';
