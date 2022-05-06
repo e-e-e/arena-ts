@@ -1,10 +1,12 @@
 {
   "parser": "@typescript-eslint/parser",
+  "plugins": ["prettier", "@typescript-eslint"],
   "extends": [
     "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
+    "prettier",
     "plugin:prettier/recommended"
   ],
+  "ignorePatterns": ["dist/**"],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
@@ -16,5 +18,10 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "prettier/prettier": "warn"
-  }
+  },
+  "overrides": [{
+    "files": ["**/*.test.ts"],
+    "extends": ["plugin:jest/recommended"],
+    "plugins": ["jest"]
+  }]
 }

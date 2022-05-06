@@ -71,7 +71,7 @@ describe('ArenaClient', () => {
           date: fakeDate,
         });
         await expect(
-          client.channels({ userId: 'fake-user-id' })
+          client.user('fake-user-id').channels()
         ).resolves.toMatchObject(fakeResponseBody);
         expect(fetch).toBeCalledTimes(1);
         expect(fetch).toBeCalledWith(
@@ -144,9 +144,9 @@ describe('ArenaClient', () => {
         fetch,
         date: fakeDate,
       });
-      await expect(client.channel('fake-channel-id')).resolves.toMatchObject(
-        fakeResponseBody
-      );
+      await expect(
+        client.channel('fake-channel-id').get()
+      ).resolves.toMatchObject(fakeResponseBody);
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
         expect.stringMatching('https://api.are.na/v2/channels/fake-channel-id'),
@@ -166,7 +166,9 @@ describe('ArenaClient', () => {
         date: fakeDate,
       });
       await expect(
-        client.channel('fake-channel-id', { per: 1, page: 1, direction: 'asc' })
+        client
+          .channel('fake-channel-id')
+          .get({ per: 1, page: 1, direction: 'asc' })
       ).resolves.toMatchObject(fakeResponseBody);
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
@@ -190,7 +192,7 @@ describe('ArenaClient', () => {
           date: fakeDate,
         });
         await expect(
-          client.channel('test', { forceRefresh: true })
+          client.channel('test').get({ forceRefresh: true })
         ).resolves.toMatchObject(fakeResponseBody);
         expect(fetch).toBeCalledTimes(1);
         expect(fetch).toBeCalledWith(expect.stringContaining('date=12345'), {
@@ -212,12 +214,12 @@ describe('ArenaClient', () => {
         fetch,
         date: fakeDate,
       });
-      await expect(client.block('fake-block-id')).resolves.toMatchObject(
+      await expect(client.block(3).get()).resolves.toMatchObject(
         fakeResponseBody
       );
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
-        expect.stringMatching('https://api.are.na/v2/blocks/fake-block-id'),
+        expect.stringMatching('https://api.are.na/v2/blocks/3'),
         {
           headers: {
             Authorization: 'Bearer MY_API_TOKEN',
@@ -229,63 +231,18 @@ describe('ArenaClient', () => {
     });
   });
 
-  describe('sort', () => {
-    it('throws 401 HttpError when not authenticated', async () => {
-      const fetch = createFetchMockWithErrorResponse(401);
-      const client = new ArenaClient({ fetch });
-      await expect(
-        client.sort('fake-channel-id', ['1', '3', '2'])
-      ).rejects.toThrowError(expectHttpError('Unauthorized', 401));
-      expect(fetch).toBeCalledTimes(1);
-      expect(fetch).toBeCalledWith(
-        'https://api.are.na/v2/channels/fake-channel-id/sort',
-        {
-          body: '{"ids":["1","3","2"]}',
-          headers: {
-            Authorization: '',
-            'Content-Type': 'application/json',
-          },
-          method: 'PUT',
-        }
-      );
-    });
-
-    it('calls PUT /channels/:channel/sort', async () => {
-      const fetch = createFetchMockWithSimpleResponse();
-      const client = new ArenaClient({
-        token: 'MY_API_TOKEN',
-        fetch,
-        date: fakeDate,
-      });
-      await expect(client.sort('fake-channel-id', ['1', '3', '2'])).resolves
-        .toBeUndefined;
-      expect(fetch).toBeCalledTimes(1);
-      expect(fetch).toBeCalledWith(
-        'https://api.are.na/v2/channels/fake-channel-id/sort',
-        {
-          body: '{"ids":["1","3","2"]}',
-          headers: {
-            Authorization: 'Bearer MY_API_TOKEN',
-            'Content-Type': 'application/json',
-          },
-          method: 'PUT',
-        }
-      );
-    });
-  });
-
   describe('connect', () => {
     it('throws 401 HttpError when not authenticated', async () => {
       const fetch = createFetchMockWithErrorResponse(401);
       const client = new ArenaClient({ fetch });
       await expect(
-        client.connect('fake-channel-id', 'another-id', 'Block')
+        client.channel('fake-channel-id').connect.block(4)
       ).rejects.toThrowError(expectHttpError('Unauthorized', 401));
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
         'https://api.are.na/v2/channels/fake-channel-id/connections',
         {
-          body: '{"connectable_type":"Block","connectable_id":"another-id"}',
+          body: '{"connectable_type":"Block","connectable_id":4}',
           headers: {
             Authorization: '',
             'Content-Type': 'application/json',
@@ -302,13 +259,14 @@ describe('ArenaClient', () => {
         fetch,
         date: fakeDate,
       });
-      await expect(client.connect('fake-channel-id', 'another-id', 'Channel'))
-        .resolves.toBeUndefined;
+      await expect(
+        client.channel('fake-channel-id').connect.channel(3)
+      ).resolves.toMatchObject(fakeResponseBody);
       expect(fetch).toBeCalledTimes(1);
       expect(fetch).toBeCalledWith(
         'https://api.are.na/v2/channels/fake-channel-id/connections',
         {
-          body: '{"connectable_type":"Channel","connectable_id":"another-id"}',
+          body: '{"connectable_type":"Channel","connectable_id":3}',
           headers: {
             Authorization: 'Bearer MY_API_TOKEN',
             'Content-Type': 'application/json',
@@ -321,9 +279,9 @@ describe('ArenaClient', () => {
       it('throws 401 HttpError when not authenticated', async () => {
         const fetch = createFetchMockWithErrorResponse(401);
         const client = new ArenaClient({ fetch });
-        await expect(client.remove('fake-channel-id')).rejects.toThrowError(
-          expectHttpError('Unauthorized', 401)
-        );
+        await expect(
+          client.channel('fake-channel-id').delete()
+        ).rejects.toThrowError(expectHttpError('Unauthorized', 401));
         expect(fetch).toBeCalledTimes(1);
         expect(fetch).toBeCalledWith(
           'https://api.are.na/v2/channels/fake-channel-id',
@@ -345,11 +303,12 @@ describe('ArenaClient', () => {
             fetch,
             date: fakeDate,
           });
-          await expect(client.remove('fake-channel-id', 'block-id')).resolves
-            .toBeUndefined;
+          await expect(
+            client.channel('fake-channel-id').disconnect.block(3)
+          ).resolves.toBeUndefined();
           expect(fetch).toBeCalledTimes(1);
           expect(fetch).toBeCalledWith(
-            'https://api.are.na/v2/channels/fake-channel-id/blocks/block-id',
+            'https://api.are.na/v2/channels/fake-channel-id/blocks/3',
             {
               headers: {
                 Authorization: 'Bearer MY_API_TOKEN',
@@ -369,7 +328,9 @@ describe('ArenaClient', () => {
             fetch,
             date: fakeDate,
           });
-          await expect(client.remove('fake-channel-id')).resolves.toBeUndefined;
+          await expect(
+            client.channel('fake-channel-id').delete()
+          ).resolves.toBeUndefined();
           expect(fetch).toBeCalledTimes(1);
           expect(fetch).toBeCalledWith(
             'https://api.are.na/v2/channels/fake-channel-id',

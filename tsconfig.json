@@ -28,8 +28,6 @@
     "alwaysStrict": true,
     /* Report errors on unused locals. */
     "noUnusedLocals": true,
-    /* Report errors on unused parameters. */
-    "noUnusedParameters": true,
     /* Report error when not all code paths in function return a value. */
     "noImplicitReturns": false,
     /* Report errors for fallthrough cases in switch statement. */
@@ -46,9 +44,13 @@
     "forceConsistentCasingInFileNames": true
   },
   "typedocOptions": {
-    "inputFiles": ["./src"],
-    "mode": "modules",
     "out": "docs",
-    "theme": "default"
-  },
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "entryPoints": [
+      "./src/index.ts"
+    ],
+    "theme": "default",
+  }
 }
