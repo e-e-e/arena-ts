@@ -164,6 +164,40 @@ export type ArenaBlock = {
   connections?: ArenaChannel[]; // connection type
 };
 
+export type ArenaCommentEntity = {
+  type: 'user';
+  user_id: number;
+  user_slug: string;
+  user_name: string;
+  start: number;
+  end: number;
+};
+
+export type ArenaBlockComment = {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  commentable_id: number;
+  commentable_type: 'Block';
+  body: string;
+  user_id: string;
+  deleted: boolean | null;
+  entities: ArenaCommentEntity[];
+  base_class: 'Comment';
+  user: ArenaUserWithDetails;
+};
+
+export type GetBlockCommentApiResponse = {
+  length: number;
+  total_pages: null | number;
+  current_page: number;
+  per: number;
+  channel_title: null | string;
+  comments: ArenaBlockComment[];
+};
+
+export type CreateBlockCommentApiResponse = ArenaBlockComment;
+
 export type GetBlockApiResponse = ArenaBlock & {
   /**  (Array)  An array of hash representations of each of the channels the block appears in */
   connections: ArenaChannel[];

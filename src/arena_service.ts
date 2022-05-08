@@ -18,6 +18,8 @@ import {
   GetUserApiResponse,
   GetUserFollowersApiResponse,
   GetUserFollowingApiResponse,
+  GetBlockCommentApiResponse,
+  CreateBlockCommentApiResponse,
 } from './arena_api_types';
 
 export class HttpError extends Error {
@@ -40,6 +42,14 @@ export interface ArenaBlockApi {
     description?: string;
     content?: string;
   }): Promise<undefined>;
+
+  comments(options?: PaginationAttributes): Promise<GetBlockCommentApiResponse>;
+
+  addComment(comment: string): Promise<CreateBlockCommentApiResponse>;
+
+  deleteComment(commentId: number): Promise<undefined>;
+
+  updateComment(commentId: number, comment: string): Promise<undefined>;
 }
 
 export interface ArenaUserApi {
@@ -272,6 +282,23 @@ export class ArenaClient implements ArenaApi {
         content?: string;
       }): Promise<undefined> => {
         return this.putJson(`blocks/${id}`, data);
+      },
+      comments: (
+        options?: PaginationAttributes
+      ): Promise<GetBlockCommentApiResponse> => {
+        return this.getJsonWithPaginationQuery(
+          `blocks/${id}/comments`,
+          options
+        );
+      },
+      addComment: (body: string): Promise<CreateBlockCommentApiResponse> => {
+        return this.postJson(`blocks/${id}/comments`, { body });
+      },
+      deleteComment: (commentId: number): Promise<undefined> => {
+        return this.del(`blocks/${id}/comments/${commentId}`);
+      },
+      updateComment: (commentId: number, body: string): Promise<undefined> => {
+        return this.putJson(`blocks/${id}/comments/${commentId}`, { body });
       },
     };
   }

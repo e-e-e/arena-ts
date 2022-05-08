@@ -57,6 +57,11 @@ Check out the complete [API Documentation](https://e-e-e.github.io/arena-ts/).
 This is based on [Arena's Restful API](dev.are.na).
 
 Note: some undocumented endpoints have been added:
+
 - `client.me()` - gets authenticated users details
 - `client.group('groupname').get()` - get group details
 - `client.group('groupname').channels()` - group channels
+- `client.block(123).comments()` - fetch block comments
+- `client.block(123).addComment('comment')` - add new comment to block
+- `client.block(123).deleteComment(123)` - delete comment by id
+- `client.block(123).updateComment(123, 'new comment')` - update comment by id
