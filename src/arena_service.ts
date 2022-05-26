@@ -85,6 +85,11 @@ export interface ArenaChannelApi {
 
   thumb(): Promise<GetChannelThumbApiResponse>;
 
+  sort: {
+    block(id: number, position: number): Promise<void>;
+    channel(id: number, position: number): Promise<void>;
+  };
+
   contents(
     options?: PaginationAttributes
   ): Promise<GetChannelContentsApiResponse>;
@@ -101,7 +106,7 @@ export interface ArenaChannelApi {
   };
   disconnect: {
     block(id: number): Promise<void>;
-    channel(id: number): Promise<void>;
+    connection(id: number): Promise<void>;
   };
 
   connections(
@@ -208,6 +213,14 @@ export class ArenaClient implements ArenaApi {
 
   channel(slug: string): ArenaChannelApi {
     return {
+      sort: {
+        block: (id: number, position: number): Promise<void> => {
+          return this.sortConnection(slug, id, position, 'Block');
+        },
+        channel: (id: number, position: number): Promise<void> => {
+          return this.sortConnection(slug, id, position, 'Channel');
+        },
+      },
       connect: {
         block: (blockId: number) =>
           this.createConnection(slug, blockId, 'Block'),
@@ -218,9 +231,8 @@ export class ArenaClient implements ArenaApi {
         block: (blockId: number) =>
           // 204 on success
           this.del(`channels/${slug}/blocks/${blockId}`),
-        channel: () => {
-          throw new Error('Method Not Implemented');
-        },
+        connection: async (connectionId) =>
+          this.del(`connections/${connectionId}`),
       },
       contents: (
         options?: PaginationAttributes
@@ -339,6 +351,19 @@ export class ArenaClient implements ArenaApi {
     return this.postJson(`channels/${channelSlug}/connections`, {
       connectable_type: type,
       connectable_id: id,
+    });
+  }
+
+  private sortConnection(
+    channelSlug: string,
+    id: number,
+    position: number,
+    type: 'Block' | 'Channel'
+  ) {
+    return this.putJson(`channels/${channelSlug}/sort`, {
+      connectable_type: type,
+      connectable_id: id,
+      new_position: position,
     });
   }
 
