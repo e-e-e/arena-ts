@@ -35,7 +35,7 @@ export interface ArenaBlockApi {
 
   channels(
     options?: PaginationAttributes
-  ): Promise<GetBlockChannelsApiResponse[]>;
+  ): Promise<GetBlockChannelsApiResponse>;
 
   update(data: {
     title?: string;
@@ -57,11 +57,11 @@ export interface ArenaUserApi {
 
   channels(
     options?: PaginationAttributes
-  ): Promise<GetUserChannelsApiResponse[]>;
+  ): Promise<GetUserChannelsApiResponse>;
 
-  following(): Promise<GetUserFollowingApiResponse[]>;
+  following(): Promise<GetUserFollowingApiResponse>;
 
-  followers(): Promise<GetUserFollowersApiResponse[]>;
+  followers(): Promise<GetUserFollowersApiResponse>;
 }
 
 export type ChannelStatus = 'public' | 'closed' | 'private';
@@ -192,9 +192,9 @@ export class ArenaClient implements ArenaApi {
       get: (): Promise<GetUserApiResponse> => this.getJson(`users/${id}`),
       channels: (options?: PaginationAttributes) =>
         this.getJsonWithPaginationQuery(`users/${id}/channels`, options),
-      following: (): Promise<GetUserFollowingApiResponse[]> =>
+      following: (): Promise<GetUserFollowingApiResponse> =>
         this.getJson(`users/${id}/following`),
-      followers: (): Promise<GetUserFollowersApiResponse[]> =>
+      followers: (): Promise<GetUserFollowersApiResponse> =>
         this.getJson(`users/${id}/followers`),
     };
   }
@@ -283,7 +283,7 @@ export class ArenaClient implements ArenaApi {
     return {
       channels: (
         options?: PaginationAttributes
-      ): Promise<GetBlockChannelsApiResponse[]> =>
+      ): Promise<GetBlockChannelsApiResponse> =>
         this.getJsonWithPaginationQuery(`blocks/${id}/channels`, options),
       get: (): Promise<GetBlockApiResponse> => {
         return this.getJson(`blocks/${id}`);
@@ -304,13 +304,13 @@ export class ArenaClient implements ArenaApi {
         );
       },
       addComment: (body: string): Promise<CreateBlockCommentApiResponse> => {
-        return this.postJson(`blocks/${id}/comments`, { body });
+        return this.postJson(`blocks/${id}/comments`, {body});
       },
       deleteComment: (commentId: number): Promise<undefined> => {
         return this.del(`blocks/${id}/comments/${commentId}`);
       },
       updateComment: (commentId: number, body: string): Promise<undefined> => {
-        return this.putJson(`blocks/${id}/comments/${commentId}`, { body });
+        return this.putJson(`blocks/${id}/comments/${commentId}`, {body});
       },
     };
   }
@@ -436,7 +436,7 @@ export class ArenaClient implements ArenaApi {
   }
 
   private paginationQueryString(options?: PaginationAttributes) {
-    const { page, per, sort, direction, forceRefresh } = {
+    const {page, per, sort, direction, forceRefresh} = {
       ...ArenaClient.defaultPaginationOptions,
       ...options,
     };

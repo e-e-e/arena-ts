@@ -159,6 +159,7 @@ export type ArenaBlock = {
   image: ArenaImage | null;
   /**  (Hash)  Representation of the author of the block */
   user: ArenaUserWithDetails; // can be user when returning
+  group?: ArenaGroup | null;
   attachment?: ArenaAttachment | null;
   embed?: ArenaEmbed | null;
   connections?: ArenaChannel[]; // connection type
@@ -210,7 +211,7 @@ export type GetBlockChannelsApiResponse = {
   total_pages: number;
   current_page: number;
   per: number;
-  channels: (ArenaChannel & ArenaOwnerInfo)[];
+  channels: ArenaChannelWithDetails[];
 };
 
 export type ConnectionData = {
@@ -294,10 +295,8 @@ export type CreateChannelApiResponse = ArenaChannel & ArenaOwnerInfo;
 
 export type GetChannelThumbApiResponse = ArenaChannel &
   ArenaOwnerInfo & {
-    contents: ReadonlyArray<
-      (ArenaBlock | Omit<ArenaChannelWithDetails, 'contents'>) & ConnectionData
-    > | null;
-  };
+  contents: ReadonlyArray<(ArenaBlock | Omit<ArenaChannelWithDetails, 'contents'>) & ConnectionData> | null;
+};
 
 export type ArenaChannelContents = (ArenaBlock | ArenaChannelWithDetails) &
   ConnectionData;
@@ -310,7 +309,8 @@ export type ChannelConnectBlockApiResponse = ArenaBlock & ConnectionData;
 export type ChannelConnectChannelApiResponse = ArenaChannelWithDetails &
   ConnectionData;
 
-export type ArenaChannelWithDetails = ArenaOwnerInfo & {
+export type ArenaChannelWithDetails = ArenaOwnerInfo & ArenaChannel & {
+  id: number;
   /**  (Object)  More information on the channel author. Contains id, slug, first_name, last_name, full_name, avatar, email, channel_count, following_count, follower_count, and profile_id */
   user?: ArenaUserWithDetails;
   group?: ArenaGroup;
