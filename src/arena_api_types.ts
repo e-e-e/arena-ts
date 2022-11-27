@@ -295,8 +295,10 @@ export type CreateChannelApiResponse = ArenaChannel & ArenaOwnerInfo;
 
 export type GetChannelThumbApiResponse = ArenaChannel &
   ArenaOwnerInfo & {
-  contents: ReadonlyArray<(ArenaBlock | Omit<ArenaChannelWithDetails, 'contents'>) & ConnectionData> | null;
-};
+    contents: ReadonlyArray<
+      (ArenaBlock | Omit<ArenaChannelWithDetails, 'contents'>) & ConnectionData
+    > | null;
+  };
 
 export type ArenaChannelContents = (ArenaBlock | ArenaChannelWithDetails) &
   ConnectionData;
@@ -309,23 +311,24 @@ export type ChannelConnectBlockApiResponse = ArenaBlock & ConnectionData;
 export type ChannelConnectChannelApiResponse = ArenaChannelWithDetails &
   ConnectionData;
 
-export type ArenaChannelWithDetails = ArenaOwnerInfo & ArenaChannel & {
-  id: number;
-  /**  (Object)  More information on the channel author. Contains id, slug, first_name, last_name, full_name, avatar, email, channel_count, following_count, follower_count, and profile_id */
-  user?: ArenaUserWithDetails;
-  group?: ArenaGroup;
-  // /**  (Integer)  If pagination is used, how many total pages there are in your request */
-  // total_pages: number;
-  // /**  (Integer)  If pagination is used, page requested */
-  // current_page: number;
-  // /**  (Integer)  If pagination is used, items per page requested */
-  // per: number;
-  // /**  (Integer)  Number of followers the channel has */
-  follower_count: number;
-  can_index: boolean;
-  /** (Array, can be null)  Array of blocks and other channels in the channel. Note: If the request is authenticated, this will include any private channels included in the requested channel that you have access to. If not, only public channels included in the requested channel will be shown. */
-  contents: ReadonlyArray<ArenaChannelContents> | null;
-};
+export type ArenaChannelWithDetails = ArenaOwnerInfo &
+  ArenaChannel & {
+    id: number;
+    /**  (Object)  More information on the channel author. Contains id, slug, first_name, last_name, full_name, avatar, email, channel_count, following_count, follower_count, and profile_id */
+    user?: ArenaUserWithDetails;
+    group?: ArenaGroup;
+    // /**  (Integer)  If pagination is used, how many total pages there are in your request */
+    // total_pages: number;
+    // /**  (Integer)  If pagination is used, page requested */
+    // current_page: number;
+    // /**  (Integer)  If pagination is used, items per page requested */
+    // per: number;
+    // /**  (Integer)  Number of followers the channel has */
+    follower_count: number;
+    can_index: boolean;
+    /** (Array, can be null)  Array of blocks and other channels in the channel. Note: If the request is authenticated, this will include any private channels included in the requested channel that you have access to. If not, only public channels included in the requested channel will be shown. */
+    contents: ReadonlyArray<ArenaChannelContents> | null;
+  };
 
 export type GetGroupChannelsApiResponse = {
   length: number;

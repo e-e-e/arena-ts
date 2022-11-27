@@ -55,9 +55,7 @@ export interface ArenaBlockApi {
 export interface ArenaUserApi {
   get(): Promise<GetUserApiResponse>;
 
-  channels(
-    options?: PaginationAttributes
-  ): Promise<GetUserChannelsApiResponse>;
+  channels(options?: PaginationAttributes): Promise<GetUserChannelsApiResponse>;
 
   following(): Promise<GetUserFollowingApiResponse>;
 
@@ -304,13 +302,13 @@ export class ArenaClient implements ArenaApi {
         );
       },
       addComment: (body: string): Promise<CreateBlockCommentApiResponse> => {
-        return this.postJson(`blocks/${id}/comments`, {body});
+        return this.postJson(`blocks/${id}/comments`, { body });
       },
       deleteComment: (commentId: number): Promise<undefined> => {
         return this.del(`blocks/${id}/comments/${commentId}`);
       },
       updateComment: (commentId: number, body: string): Promise<undefined> => {
-        return this.putJson(`blocks/${id}/comments/${commentId}`, {body});
+        return this.putJson(`blocks/${id}/comments/${commentId}`, { body });
       },
     };
   }
@@ -436,7 +434,7 @@ export class ArenaClient implements ArenaApi {
   }
 
   private paginationQueryString(options?: PaginationAttributes) {
-    const {page, per, sort, direction, forceRefresh} = {
+    const { page, per, sort, direction, forceRefresh } = {
       ...ArenaClient.defaultPaginationOptions,
       ...options,
     };
