@@ -113,7 +113,8 @@ export type ArenaImage = {
   };
 };
 
-export type ArenaBlock = {
+// https://dev.are.na/documentation/blocks
+type ArenaBaseBlock = {
   /**  (Integer)  The internal ID of the block */
   id: number;
   /**  (String, can be null)  The title of the block */
@@ -164,6 +165,64 @@ export type ArenaBlock = {
   embed?: ArenaEmbed | null;
   connections?: ArenaChannel[]; // connection type
 };
+
+export type ArenaImageBlock = ArenaBaseBlock & {
+  /**  (String)  The type of block. Will always be "Image" */
+  class: 'Image';
+  image: ArenaImage;
+  source: {
+    title?: string;
+    /**  (String) The url of the source */
+    url: string;
+    /**  (Hash)  A hash of more info about the provider name: (String) The name of the source provider url: (String) The hostname of the source provider */
+    provider: {
+      url: string;
+      name: string;
+    } | null;
+  };
+};
+
+export type ArenaTextBlock = ArenaBaseBlock & {
+  /**  (String)  The type of block. Will always be "Text" */
+  class: 'Text';
+  /**  (String)  The text content of the block as markdown */
+  content: string;
+  /**  (String)  The text content of the block as HTML */
+  content_html: string;
+};
+
+export type ArenaLinkBlock = ArenaBaseBlock & {
+  /**  (String)  The type of block. Will always be "Link" */
+  class: 'Link';
+  image: ArenaImage;
+  source: {
+    title?: string;
+    /**  (String) The url of the source */
+    url: string;
+    /**  (Hash)  A hash of more info about the provider name: (String) The name of the source provider url: (String) The hostname of the source provider */
+    provider: {
+      url: string;
+      name: string;
+    } | null;
+  };
+};
+
+export type ArenaMediaBlock = ArenaBaseBlock & {
+  /**  (String)  The type of block. Will always be "Media" */
+  class: 'Media';
+};
+
+export type ArenaAttachmentBlock = ArenaBaseBlock & {
+  /**  (String)  The type of block. Will always be "Attachment" */
+  class: 'Attachment';
+}
+
+export type ArenaBlock = ArenaBaseBlock 
+  | ArenaImageBlock 
+  | ArenaTextBlock 
+  | ArenaLinkBlock 
+  | ArenaMediaBlock 
+  | ArenaAttachmentBlock;
 
 export type ArenaCommentEntity = {
   type: 'user';
