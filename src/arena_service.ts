@@ -142,7 +142,7 @@ export interface ArenaApi {
 
   channels(options?: PaginationAttributes): Promise<GetChannelsApiResponse>;
 
-  user(id: string): ArenaUserApi;
+  user(id: number): ArenaUserApi;
 
   group(slug: string): ArenaGroupApi;
 
@@ -185,7 +185,7 @@ export class ArenaClient implements ArenaApi {
     return this.getJsonWithPaginationQuery('channels', options);
   }
 
-  user(id: string): ArenaUserApi {
+  user(id: number): ArenaUserApi {
     return {
       get: (): Promise<GetUserApiResponse> => this.getJson(`users/${id}`),
       channels: (options?: PaginationAttributes) =>

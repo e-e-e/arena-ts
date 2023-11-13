@@ -71,12 +71,12 @@ describe('ArenaClient', () => {
           date: fakeDate,
         });
         await expect(
-          client.user('fake-user-id').channels()
+          client.user(123456).channels()
         ).resolves.toMatchObject(fakeResponseBody);
         expect(fetch).toBeCalledTimes(1);
         expect(fetch).toBeCalledWith(
           expect.stringMatching(
-            'https://api.are.na/v2/users/fake-user-id/channels?'
+            'https://api.are.na/v2/users/123456/channels?'
           ),
           {
             headers: {
