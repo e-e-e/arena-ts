@@ -5,6 +5,8 @@
 
 A typescript client for [are.na](are.na). Compatible in node and browser environments.
 
+Minimum node version 18.
+
 Prior art: [arena-js](https://github.com/ivangreene/arena-js).
 
 **Note:** This is an unofficial client and typing information has been derived by comparing the official documentation
@@ -29,23 +31,6 @@ yarn add arena-ts
 import {ArenaClient} from 'arena-ts';
 
 const client = new ArenaClient();
-
-client.channels().then(console.log);
-```
-
-##### Node JS
-
-To use this library in Node you will need to inject your choice of Fetch API compatible libraries when instantiating the
-client. A good choice is [node-fetch](https://www.npmjs.com/package/node-fetch). Fetch polyfills have been excluded from
-this package to make it lighter for browsers where fetch is included natively.
-
-For example:
-
-```ts
-import {ArenaClient} from 'arena-ts';
-import fetch from 'node-fetch'
-
-const client = new ArenaClient({fetch});
 
 client.channels().then(console.log);
 ```
