@@ -173,7 +173,7 @@ export class ArenaClient implements ArenaApi {
       'Content-Type': 'application/json',
       Authorization: config?.token ? `Bearer ${config.token}` : '',
     };
-    this.fetch = config?.fetch || (window?.fetch.bind(window) as any as Fetch);
+    this.fetch = config?.fetch ||  fetch;
     this.date = config?.date || Date;
   }
 
