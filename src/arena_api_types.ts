@@ -215,13 +215,14 @@ export type ArenaMediaBlock = ArenaBaseBlock & {
 export type ArenaAttachmentBlock = ArenaBaseBlock & {
   /**  (String)  The type of block. Will always be "Attachment" */
   class: 'Attachment';
-}
+};
 
-export type ArenaBlock = ArenaBaseBlock 
-  | ArenaImageBlock 
-  | ArenaTextBlock 
-  | ArenaLinkBlock 
-  | ArenaMediaBlock 
+export type ArenaBlock =
+  | ArenaBaseBlock
+  | ArenaImageBlock
+  | ArenaTextBlock
+  | ArenaLinkBlock
+  | ArenaMediaBlock
   | ArenaAttachmentBlock;
 
 export type ArenaCommentEntity = {
