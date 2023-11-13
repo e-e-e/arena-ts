@@ -114,7 +114,7 @@ export type ArenaImage = {
 };
 
 // https://dev.are.na/documentation/blocks
-type ArenaBaseBlock = {
+export type ArenaBaseBlock = {
   /**  (Integer)  The internal ID of the block */
   id: number;
   /**  (String, can be null)  The title of the block */

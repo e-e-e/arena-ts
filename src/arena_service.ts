@@ -25,7 +25,10 @@ import {
 export class HttpError extends Error {
   readonly name = 'HttpError';
 
-  constructor(message?: string, readonly status: number = 500) {
+  constructor(
+    message?: string,
+    readonly status: number = 500,
+  ) {
     super(message);
   }
 }
@@ -34,7 +37,7 @@ export interface ArenaBlockApi {
   get(): Promise<GetBlockApiResponse>;
 
   channels(
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<GetBlockChannelsApiResponse>;
 
   update(data: {
@@ -68,7 +71,7 @@ export interface ArenaGroupApi {
   get(): Promise<GetGroupApiResponse>;
 
   channels(
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<GetGroupChannelsApiResponse>;
 }
 
@@ -89,7 +92,7 @@ export interface ArenaChannelApi {
   };
 
   contents(
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<GetChannelContentsApiResponse>;
 
   createBlock(data: {
@@ -108,29 +111,29 @@ export interface ArenaChannelApi {
   };
 
   connections(
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<GetConnectionsApiResponse[]>;
 }
 
 export interface ArenaSearchApi {
   everything(
     query: string,
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<SearchApiResponse>;
 
   users(
     query: string,
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<SearchApiResponse>;
 
   channels(
     query: string,
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<SearchApiResponse>;
 
   blocks(
     query: string,
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ): Promise<SearchApiResponse>;
 }
 
@@ -203,7 +206,7 @@ export class ArenaClient implements ArenaApi {
       channels: (options?: PaginationAttributes): Promise<any> => {
         return this.getJsonWithPaginationQuery(
           `groups/${slug}/channels`,
-          options
+          options,
         );
       },
     };
@@ -233,19 +236,19 @@ export class ArenaClient implements ArenaApi {
           this.del(`connections/${connectionId}`),
       },
       contents: (
-        options?: PaginationAttributes
+        options?: PaginationAttributes,
       ): Promise<GetChannelContentsApiResponse> => {
         return this.getJsonWithPaginationQuery(
           `channels/${slug}/contents`,
-          options
+          options,
         );
       },
       connections: (
-        options?: PaginationAttributes
+        options?: PaginationAttributes,
       ): Promise<GetConnectionsApiResponse[]> => {
         return this.getJsonWithPaginationQuery(
           `channels/${slug}/connections`,
-          options
+          options,
         );
       },
       create: (status?: ChannelStatus): Promise<CreateChannelApiResponse> => {
@@ -280,7 +283,7 @@ export class ArenaClient implements ArenaApi {
   block(id: number): ArenaBlockApi {
     return {
       channels: (
-        options?: PaginationAttributes
+        options?: PaginationAttributes,
       ): Promise<GetBlockChannelsApiResponse> =>
         this.getJsonWithPaginationQuery(`blocks/${id}/channels`, options),
       get: (): Promise<GetBlockApiResponse> => {
@@ -294,11 +297,11 @@ export class ArenaClient implements ArenaApi {
         return this.putJson(`blocks/${id}`, data);
       },
       comments: (
-        options?: PaginationAttributes
+        options?: PaginationAttributes,
       ): Promise<GetBlockCommentApiResponse> => {
         return this.getJsonWithPaginationQuery(
           `blocks/${id}/comments`,
-          options
+          options,
         );
       },
       addComment: (body: string): Promise<CreateBlockCommentApiResponse> => {
@@ -317,7 +320,7 @@ export class ArenaClient implements ArenaApi {
     return {
       everything: (
         query: string,
-        options?: PaginationAttributes
+        options?: PaginationAttributes,
       ): Promise<any> =>
         this.getJsonWithSearchAndPaginationQuery(`/search`, {
           q: query,
@@ -344,7 +347,7 @@ export class ArenaClient implements ArenaApi {
   private createConnection(
     channelSlug: string,
     id: number,
-    type: 'Block' | 'Channel'
+    type: 'Block' | 'Channel',
   ) {
     return this.postJson(`channels/${channelSlug}/connections`, {
       connectable_type: type,
@@ -356,7 +359,7 @@ export class ArenaClient implements ArenaApi {
     channelSlug: string,
     id: number,
     position: number,
-    type: 'Block' | 'Channel'
+    type: 'Block' | 'Channel',
   ) {
     return this.putJson(`channels/${channelSlug}/sort`, {
       connectable_type: type,
@@ -367,7 +370,7 @@ export class ArenaClient implements ArenaApi {
 
   private getJsonWithSearchAndPaginationQuery(
     url: string,
-    options?: PaginationAttributes & { q?: string }
+    options?: PaginationAttributes & { q?: string },
   ) {
     const qs = this.paginationQueryString(options);
     const searchQuery =
@@ -377,7 +380,7 @@ export class ArenaClient implements ArenaApi {
 
   private getJsonWithPaginationQuery(
     url: string,
-    options?: PaginationAttributes
+    options?: PaginationAttributes,
   ) {
     const qs = this.paginationQueryString(options);
     return this.getJson(`${url}?${qs}`);
