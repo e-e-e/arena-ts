@@ -218,7 +218,6 @@ export type ArenaAttachmentBlock = ArenaBaseBlock & {
 };
 
 export type ArenaBlock =
-  | ArenaBaseBlock
   | ArenaImageBlock
   | ArenaTextBlock
   | ArenaLinkBlock
