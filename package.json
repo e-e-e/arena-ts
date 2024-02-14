@@ -1,13 +1,13 @@
 {
   "name": "arena-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A typescript API client for Are.na",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": { 
-    "type": "git", 
-    "url": "https://github.com/e-e-e/arena-ts.git" 
-  }, 
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/e-e-e/arena-ts.git"
+  },
   "scripts": {
     "build": "tsc -b tsconfig.build.json",
     "dev": "tsc -b tsconfig.build.json -w",
